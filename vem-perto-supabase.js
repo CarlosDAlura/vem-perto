@@ -135,7 +135,7 @@
   async function customerOrders() {
     const current = await identity();
     if (!current) return [];
-    const orders = await one(db.from('orders').select('*,stores(id,name),order_items(*),order_financials(*),delivery_assignments(*,couriers(*,profiles(*))').order('created_at', { ascending: false }));
+    const orders = await one(db.from('orders').select('*,stores(id,name),order_items(*),order_financials(*),delivery_assignments(*,couriers(*))').order('created_at', { ascending: false }));
     return orders.map(mapOrder);
   }
   async function createOrder({ storeId, zoneId, addressId, items, couponCode }) {
