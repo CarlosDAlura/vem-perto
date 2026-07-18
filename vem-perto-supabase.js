@@ -67,7 +67,7 @@
     if (!result.data.session) return { confirmationRequired: true };
     return { confirmationRequired: false, identity: await identity() };
   }
-  async function signOut() { ensure(await db.auth.signOut()); }
+  async function signOut() { ensure(await db.auth.signOut({ scope: 'local' })); }
 
   async function catalog() {
     const [stores, reviews, categories] = await Promise.all([
