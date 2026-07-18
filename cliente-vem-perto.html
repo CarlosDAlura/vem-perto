@@ -44,8 +44,10 @@
   <section class="modal" id="chatModal"><div class="box tall wide"><div class="heading" style="margin:0 0 10px"><h2>Mensagens</h2><button class="btn" id="closeChat">Fechar</button></div><div class="chat-layout"><aside class="chat-contacts"><button class="contact on" data-contact="Restaurante">🏪 Restaurante</button><button class="contact" data-contact="Motoboy">🛵 Motoboy</button></aside><div class="chat-main"><div class="chat-top" id="chatTitle">Restaurante · Burguer do Bairro</div><div class="messages" id="messages"></div><div class="typing" id="typing"></div><div class="chat-send"><button class="icon-btn" id="sendPhoto" title="Foto">📷</button><button class="icon-btn" id="sendLocation" title="Localização">📍</button><input id="messageInput" placeholder="Escreva uma mensagem"><button class="btn red" id="sendMessage">Enviar</button></div></div></div><p class="field-help">Chat demonstrativo salvo neste aparelho. Mensagens, fotos, localização e confirmação de leitura em tempo real exigem servidor.</p></div></section>
   <section class="modal" id="notificationsModal"><div class="box tall"><div class="heading" style="margin:0 0 10px"><h2>Notificações</h2><button class="btn" id="closeNotifications">Fechar</button></div><div class="notification-list" id="notificationsList"></div><p class="field-help">Ative as notificações do navegador quando a integração de push estiver disponível.</p><button class="btn" id="enablePush">Ativar notificações do navegador</button></div></section>
   <div class="toast" id="toast"></div>
-  <script src="vem-perto-core.js"></script>
-  <script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="vem-perto-supabase.js"></script>
+  <script src="cliente-supabase.js"></script>
+  <script type="text/plain" data-legacy-local-demo>
   (()=>{
     const qs=s=>document.querySelector(s),qsa=s=>[...document.querySelectorAll(s)];
     const money=x=>Number(x).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
