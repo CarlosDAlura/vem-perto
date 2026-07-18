@@ -1,11 +1,145 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vem Perto | Painel do lojista</title><style>
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vem Perto | Painel do lojista</title>
+<style>
 :root{--red:#e82036;--ink:#25252b;--muted:#6d6d76;--line:#e9e9ed;--bg:#f7f7f8}*{box-sizing:border-box}body{margin:0;font:15px Arial,sans-serif;color:var(--ink);background:var(--bg)}header{background:#fff;border-bottom:1px solid var(--line);padding:17px 5%;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:2}.brand{font-size:25px;font-weight:800;color:var(--red)}.tag{border-radius:99px;padding:7px 10px;background:#fff0f1;color:#ba1728;font-size:12px;font-weight:700}.wrap{max-width:1180px;margin:auto;padding:28px 18px 60px}.hero{background:linear-gradient(125deg,#a70c22,#e82036);color:white;border-radius:20px;padding:25px;display:flex;justify-content:space-between;gap:20px;align-items:center}.hero h1{margin:0 0 6px;font-size:25px}.hero p{margin:0;color:#ffe4e7}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:20px}.card h2{font-size:18px;margin:0 0 16px}.card h3{font-size:15px;margin:0 0 8px}.metric{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric div{border:1px solid var(--line);border-radius:12px;padding:13px}.metric b{display:block;font-size:20px}.metric span,.small{font-size:12px;color:var(--muted)}.order,.product{border-top:1px solid var(--line);padding:14px 0}.order:first-child,.product:first-child{border-top:0;padding-top:0}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.status{font-size:12px;font-weight:700;border-radius:99px;padding:6px 9px;background:#fff0f1;color:#b20f20}button{border:0;border-radius:9px;background:var(--red);color:#fff;font-weight:700;padding:10px 12px;cursor:pointer}button.alt{background:#f1f1f3;color:#37373d}button.warn{background:#292930}button:disabled{opacity:.45;cursor:not-allowed}input,select{width:100%;border:1px solid #d9d9df;border-radius:9px;padding:10px;background:white}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.form label{font-size:12px;color:var(--muted)}.form label.full{grid-column:1/-1}.notice{padding:11px;border-radius:10px;background:#f8f8fa;color:var(--muted);font-size:13px}.toast{position:fixed;right:16px;bottom:16px;background:#292930;color:#fff;border-radius:10px;padding:12px;display:none;z-index:3}@media(max-width:800px){.grid{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.metric{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}header{padding:14px 18px}}
-</style></head><body><header><div><span class="brand">vem perto</span> <span class="tag">PAINEL DO LOJISTA</span></div><div id="shopBadge" class="small"></div></header><main class="wrap"><section class="hero"><div><h1>Uma loja, os mesmos pedidos.</h1><p>Pedidos, cardápio e resultados usam a fonte central do Vem Perto.</p></div><button class="alt" onclick="document.querySelector('#request').scrollIntoView({behavior:'smooth'})">Cadastrar nova loja</button></section><section class="grid"><div class="card"><h2>Pedidos da loja</h2><div id="orders"></div></div><div><div class="card"><h2>Resumo financeiro</h2><div class="metric" id="metrics"></div><p class="notice">Valores derivados do mesmo registro financeiro que aparece para cliente, motoboy e administrador.</p></div><div class="card" style="margin-top:18px"><h2>Loja e horário</h2><div id="shopInfo"></div></div></div></section><section class="grid"><div class="card"><h2>Cardápio sincronizado</h2><p class="small">Salvar uma alteração atualiza a área do cliente imediatamente neste ambiente compartilhado.</p><div id="products"></div></div><div class="card" id="request"><h2>Solicitar cadastro de loja</h2><p class="small">A solicitação é registrada centralmente e só fica visível para clientes após aprovação administrativa.</p><form id="shopForm" class="form"><label>Nome da loja<input name="name" required placeholder="Ex.: Cantina da Praça"></label><label>Categoria<input name="category" required placeholder="Ex.: Massas"></label><label>Responsável<input name="ownerName" required></label><label>E-mail<input name="email" type="email" required></label><label>Telefone<input name="phone" required></label><label>Documentos enviados<input name="documents" placeholder="CNPJ, RG, comprovante"></label><label class="full">Áreas de entrega (separe por vírgula)<input name="zones" required placeholder="Centro, Vila Nova"></label><label>Distância máxima (km)<input name="maxDistance" type="number" min="1" value="5"></label><label>Taxa base (R$)<input name="baseFee" type="number" step=".01" value="3"></label><label>Abre<input name="open" type="time" value="09:00"></label><label>Fecha<input name="close" type="time" value="18:00"></label><button class="full">Enviar para aprovação</button></form></div></section></main><div class="toast" id="toast"></div><script src="vem-perto-core.js"></script><script>
+</style>
+</head>
+<body>
+<header>
+<div>
+<span class="brand">vem perto</span>
+<span class="tag">PAINEL DO LOJISTA</span>
+</div>
+<div id="shopBadge" class="small">
+</div>
+</header>
+<main class="wrap">
+<section class="hero">
+<div>
+<h1>Uma loja, os mesmos pedidos.</h1>
+<p>Pedidos, cardÃ¡pio e resultados usam a fonte central do Vem Perto.</p>
+</div>
+<button class="alt" onclick="document.querySelector('#request').scrollIntoView({behavior:'smooth'})">Cadastrar nova loja</button>
+</section>
+<section class="grid">
+<div class="card">
+<h2>Pedidos da loja</h2>
+<div id="orders">
+</div>
+</div>
+<div>
+<div class="card">
+<h2>Resumo financeiro</h2>
+<div class="metric" id="metrics">
+</div>
+<p class="notice">Valores derivados do mesmo registro financeiro que aparece para cliente, motoboy e administrador.</p>
+</div>
+<div class="card" style="margin-top:18px">
+<h2>Loja e horÃ¡rio</h2>
+<div id="shopInfo">
+</div>
+</div>
+</div>
+</section>
+<section class="grid">
+<div class="card">
+<h2>CardÃ¡pio sincronizado</h2>
+<p class="small">Salvar uma alteraÃ§Ã£o atualiza a Ã¡rea do cliente imediatamente neste ambiente compartilhado.</p>
+<div id="products">
+</div>
+</div>
+<div class="card" id="request">
+<h2>Solicitar cadastro de loja</h2>
+<p class="small">A solicitaÃ§Ã£o Ã© registrada centralmente e sÃ³ fica visÃ­vel para clientes apÃ³s aprovaÃ§Ã£o administrativa.</p>
+<form id="shopForm" class="form">
+<label>Nome da loja<input name="name" required placeholder="Ex.: Cantina da PraÃ§a">
+</label>
+<label>Categoria<input name="category" required placeholder="Ex.: Massas">
+</label>
+<label>ResponsÃ¡vel<input name="ownerName" required>
+</label>
+<label>E-mail<input name="email" type="email" required>
+</label>
+<label>Telefone<input name="phone" required>
+</label>
+<label>Documentos enviados<input name="documents" type="file" multiple accept="application/pdf,image/jpeg,image/png">
+</label>
+<label class="full">Ãreas de entrega (separe por vÃ­rgula)<input name="zones" required placeholder="Centro, Vila Nova">
+</label>
+<label>DistÃ¢ncia mÃ¡xima (km)<input name="maxDistance" type="number" min="1" value="5">
+</label>
+<label>Taxa base (R$)<input name="baseFee" type="number" step=".01" value="3">
+</label>
+<label>Abre<input name="open" type="time" value="09:00">
+</label>
+<label>Fecha<input name="close" type="time" value="18:00">
+</label>
+<button class="full">Enviar para aprovaÃ§Ã£o</button>
+</form>
+</div>
+</section>
+</main>
+<div class="toast" id="toast">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="vem-perto-supabase.js"></script>
+<script src="lojista-supabase.js"></script>
+<script type="text/plain" data-legacy-local-demo>
 const core=window.VemPertoCore,merchant={role:'merchant',id:'MERCHANT-DEMO',shopId:'SHOP-BURGUER'},q=s=>document.querySelector(s),money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const toast=t=>{q('#toast').textContent=t;q('#toast').style.display='block';setTimeout(()=>q('#toast').style.display='none',2800)};const state=()=>core.getState();
-function actionFor(order){const next={'Aguardando confirmação da loja':['Aceitar pedido','Aceito pela loja'],'Aceito pela loja':['Iniciar preparo','Em preparação'],'Em preparação':['Marcar como pronto','Pronto para retirada'],'Pronto para retirada':['Solicitar motoboy','Aguardando motoboy']}[order.status];return next?`<button onclick="advance('${order.id}','${next[1]}')">${next[0]}</button>`:''}
+function actionFor(order){const next={'Aguardando confirmaÃ§Ã£o da loja':['Aceitar pedido','Aceito pela loja'],'Aceito pela loja':['Iniciar preparo','Em preparaÃ§Ã£o'],'Em preparaÃ§Ã£o':['Marcar como pronto','Pronto para retirada'],'Pronto para retirada':['Solicitar motoboy','Aguardando motoboy']}[order.status];return next?`<button onclick="advance('${order.id}','${next[1]}')">${next[0]}</button>`:''}
 function advance(id,next){try{core.transitionOrder(id,next,{...merchant,prepMinutes:25});toast('Pedido atualizado para: '+next)}catch(e){toast(e.message)}}
-function saveProduct(id){try{const price=Number(q('#price-'+id).value),available=q('#available-'+id).checked;core.updateProduct(id,{price,available},merchant);toast('Cardápio atualizado para todos os painéis.')}catch(e){toast(e.message)}}
-function render(){const s=state(),shop=s.shops.find(x=>x.id===merchant.shopId),orders=s.orders.filter(x=>x.shopId===shop.id),products=s.products.filter(x=>x.shopId===shop.id),done=orders.filter(x=>x.status==='Entregue'),gross=orders.reduce((sum,x)=>sum+x.financial.total,0),net=orders.reduce((sum,x)=>sum+x.financial.shopNet,0);q('#shopBadge').textContent=shop.name+' · '+(shop.status==='approved'?'Aprovada':'Em análise');q('#metrics').innerHTML=`<div><span>Pedidos</span><b>${orders.length}</b></div><div><span>Bruto</span><b>${money(gross)}</b></div><div><span>Líquido</span><b>${money(net)}</b></div>`;q('#shopInfo').innerHTML=`<h3>${shop.name}</h3><p class="small">${shop.open}–${shop.close} · ${shop.zones.join(', ')||'Área ainda não informada'}</p><label class="small">Status</label><select id="shopStatus"><option value="approved" ${shop.status==='approved'?'selected':''}>Aberta</option><option value="suspended" ${shop.status==='suspended'?'selected':''}>Pausada</option></select><div class="actions"><button class="alt" onclick="saveShop()">Salvar status</button></div>`;q('#orders').innerHTML=orders.length?orders.map(o=>`<article class="order"><div class="row"><b>${o.id}</b><span class="status">${o.status}</span></div><p class="small">${o.items.map(i=>i.quantity+'× '+i.name).join(', ')} · ${o.address||'Endereço não informado'}</p><div class="row"><b>${money(o.financial.total)}</b><span class="small">preparo: ${o.prepMinutes||'—'} min</span></div><div class="actions">${actionFor(o)} ${o.status==='Aguardando confirmação da loja'?`<button class="alt" onclick="advance('${o.id}','Recusado pela loja')">Recusar</button>`:''}</div></article>`).join(''):'<p class="notice">Nenhum pedido central recebido ainda.</p>';q('#products').innerHTML=products.map(p=>`<article class="product"><div class="row"><div><h3>${p.name}</h3><span class="small">${p.category} · ${p.description||''}</span></div><label class="small">Disponível <input id="available-${p.id}" type="checkbox" ${p.available?'checked':''} style="width:auto"></label></div><div class="row" style="margin-top:10px"><input id="price-${p.id}" type="number" min="0" step=".01" value="${p.price}" style="max-width:140px"><button class="alt" onclick="saveProduct('${p.id}')">Salvar preço</button></div></article>`).join('');}
+function saveProduct(id){try{const price=Number(q('#price-'+id).value),available=q('#available-'+id).checked;core.updateProduct(id,{price,available},merchant);toast('CardÃ¡pio atualizado para todos os painÃ©is.')}catch(e){toast(e.message)}}
+function render(){const s=state(),shop=s.shops.find(x=>x.id===merchant.shopId),orders=s.orders.filter(x=>x.shopId===shop.id),products=s.products.filter(x=>x.shopId===shop.id),done=orders.filter(x=>x.status==='Entregue'),gross=orders.reduce((sum,x)=>sum+x.financial.total,0),net=orders.reduce((sum,x)=>sum+x.financial.shopNet,0);q('#shopBadge').textContent=shop.name+' Â· '+(shop.status==='approved'?'Aprovada':'Em anÃ¡lise');q('#metrics').innerHTML=`<div>
+<span>Pedidos</span>
+<b>${orders.length}</b>
+</div>
+<div>
+<span>Bruto</span>
+<b>${money(gross)}</b>
+</div>
+<div>
+<span>LÃ­quido</span>
+<b>${money(net)}</b>
+</div>`;q('#shopInfo').innerHTML=`<h3>${shop.name}</h3>
+<p class="small">${shop.open}â€“${shop.close} Â· ${shop.zones.join(', ')||'Ãrea ainda nÃ£o informada'}</p>
+<label class="small">Status</label>
+<select id="shopStatus">
+<option value="approved" ${shop.status==='approved'?'selected':''}>Aberta</option>
+<option value="suspended" ${shop.status==='suspended'?'selected':''}>Pausada</option>
+</select>
+<div class="actions">
+<button class="alt" onclick="saveShop()">Salvar status</button>
+</div>`;q('#orders').innerHTML=orders.length?orders.map(o=>`<article class="order">
+<div class="row">
+<b>${o.id}</b>
+<span class="status">${o.status}</span>
+</div>
+<p class="small">${o.items.map(i=>i.quantity+'Ã— '+i.name).join(', ')} Â· ${o.address||'EndereÃ§o nÃ£o informado'}</p>
+<div class="row">
+<b>${money(o.financial.total)}</b>
+<span class="small">preparo: ${o.prepMinutes||'â€”'} min</span>
+</div>
+<div class="actions">${actionFor(o)} ${o.status==='Aguardando confirmaÃ§Ã£o da loja'?`<button class="alt" onclick="advance('${o.id}','Recusado pela loja')">Recusar</button>`:''}</div>
+</article>`).join(''):'<p class="notice">Nenhum pedido central recebido ainda.</p>';q('#products').innerHTML=products.map(p=>`<article class="product">
+<div class="row">
+<div>
+<h3>${p.name}</h3>
+<span class="small">${p.category} Â· ${p.description||''}</span>
+</div>
+<label class="small">DisponÃ­vel <input id="available-${p.id}" type="checkbox" ${p.available?'checked':''} style="width:auto">
+</label>
+</div>
+<div class="row" style="margin-top:10px">
+<input id="price-${p.id}" type="number" min="0" step=".01" value="${p.price}" style="max-width:140px">
+<button class="alt" onclick="saveProduct('${p.id}')">Salvar preÃ§o</button>
+</div>
+</article>`).join('');}
 function saveShop(){try{core.updateShop(merchant.shopId,{status:q('#shopStatus').value},merchant);toast('Status da loja atualizado.')}catch(e){toast(e.message)}}
-q('#shopForm').onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));try{core.requestShop({...f,zones:f.zones.split(',').map(x=>x.trim()).filter(Boolean),documents:f.documents.split(',').map(x=>x.trim()).filter(Boolean)});e.target.reset();toast('Solicitação enviada para aprovação administrativa.')}catch(err){toast(err.message)}};core.subscribe(render);render();
-</script></body></html>
+q('#shopForm').onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));try{core.requestShop({...f,zones:f.zones.split(',').map(x=>x.trim()).filter(Boolean),documents:f.documents.split(',').map(x=>x.trim()).filter(Boolean)});e.target.reset();toast('SolicitaÃ§Ã£o enviada para aprovaÃ§Ã£o administrativa.')}catch(err){toast(err.message)}};core.subscribe(render);render();
+</script>
+</body>
+</html>
