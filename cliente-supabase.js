@@ -50,7 +50,18 @@
     state.user = user;
     qs('#guestActions').hidden = !!user;
     qs('#userActions').hidden = !user;
-    if (user) qs('#userName').textContent = user.profile.full_name.split(' ')[0];
+    if (user) {
+      const name = user.profile?.full_name || user.user?.email || 'Você';
+      const firstName = name.split(' ')[0];
+      qs('#userName').textContent = firstName;
+      qs('#userInitial').textContent = firstName.slice(0, 1).toUpperCase();
+      qs('#welcomeTitle').textContent = `Olá, ${firstName}`;
+      qs('#welcomeSubtitle').textContent = 'O que você quer pedir hoje?';
+    } else {
+      qs('#userInitial').textContent = 'VP';
+      qs('#welcomeTitle').textContent = 'Seu momento, do seu jeito';
+      qs('#welcomeSubtitle').textContent = 'Descubra sabores perto de você.';
+    }
   }
   function renderAddress() {
     const address = state.address;
@@ -62,12 +73,32 @@
     qs('#addressText').textContent = `${address.neighborhood || ''}, ${address.city}. Mostramos somente quem atende esta região.`;
   }
   function renderChips() {
-    qs('#chips').innerHTML = ['Todos', ...state.catalog.categories.map(category => category.name)].map(name => `<button class="chip ${state.category === name ? 'on' : ''}" data-cat="${escape(name)}">${escape(name)}</button>`).join('');
+    const icons = { Todos: '✦', Hamburguer: '🍔', Hambúrguer: '🍔', Pizza: '🍕', Saladas: '🥗', Mercado: '🛒', Doces: '🍰', Bebidas: '🥤', Japonês: '🍣', Lanches: '🥪' };
+    qs('#chips').innerHTML = ['Todos', ...state.catalog.categories.map(category => category.name)].map(name => `<button class="chip ${state.category === name ? 'on' : ''}" data-cat="${escape(name)}"><span class="chip-icon">${icons[name] || '🍽️'}</span>${escape(name)}</button>`).join('');
   }
   function card(store) {
     const product = store.products[0]; if (!product) return '';
     const status = activeStatus(store); const zone = deliveryZone(store); const favorite = state.favorites.includes(store.id);
-    return `<article class="card shop-card ${status.key === 'closed' ? 'closed' : ''}"><img class="photo" src="${escape(product.image_path || 'default-store.svg')}" alt="${escape(product.name)} — ${escape(store.name)}" onerror="this.onerror=null;this.src='default-store.svg'"><button class="fav ${favorite ? 'on' : ''}" data-favorite="${store.id}" aria-label="Favoritar ${escape(store.name)}">${favorite ? '♥' : '♡'}</button><div class="in"><h3>${escape(store.name)}</h3><span class="shop-status status-${status.key}"><i class="status-dot"></i>${status.label}</span><div class="meta"><span class="rating">★ ${(store.rating || 0).toFixed(1)}</span> · ${store.reviewCount} avaliações<br>${escape(product.name)}<div class="minimum">Pedido mínimo ${money(store.min_order_amount)}</div></div><div class="mini-info"><span>🕒 Preparo ${product.prep_minutes} min</span><span>🛵 Entrega ${product.prep_minutes + 15} min</span></div>${zone ? `<div class="mini-info"><span>${escape(zone.name)}</span><span>Taxa ${money(zone.base_delivery_fee)}</span></div>` : `<div class="mini-info"><span>${state.address ? 'Não entrega neste bairro' : 'Defina o endereço para a taxa'}</span></div>`}</div><button class="add" data-add="${store.id}" ${status.key === 'closed' || (state.address && !zone) ? 'disabled' : ''} aria-label="Adicionar ${escape(product.name)}">+</button></article>`;
+    return `<article class="card shop-card ${status.key === 'closed' ? 'closed' : ''}" data-store="${store.id}" tabindex="0" aria-label="Abrir ${escape(store.name)}"><div class="photo-wrap"><img class="photo" src="${escape(product.image_path || 'default-store.svg')}" alt="${escape(product.name)} — ${escape(store.name)}" onerror="this.onerror=null;this.src='default-store.svg'"><span class="shop-status status-${status.key}"><i class="status-dot"></i>${status.label}</span></div><button class="fav ${favorite ? 'on' : ''}" data-favorite="${store.id}" aria-label="Favoritar ${escape(store.name)}">${favorite ? '♥' : '♡'}</button><div class="in"><div class="store-heading"><h3>${escape(store.name)}</h3><span class="rating">★ ${(store.rating || 0).toFixed(1)}</span></div><div class="meta"><span>${escape(store.category_label || product.name)}</span><span>·</span><span>${store.reviewCount} avaliações</span></div><div class="mini-info"><span>🕒 ${product.prep_minutes}–${product.prep_minutes + 10} min</span><span>🛵 ${zone ? money(zone.base_delivery_fee) : 'Ver taxa'}</span></div><p class="featured-product">${escape(product.name)}</p></div><button class="add" data-add="${store.id}" data-product="${product.id}" ${status.key === 'closed' || (state.address && !zone) ? 'disabled' : ''} aria-label="Adicionar ${escape(product.name)}">+</button></article>`;
+  }
+  function storeById(id) { return state.catalog.stores.find(store => store.id === id); }
+  function openStore(id) {
+    const store = storeById(id); if (!store) return;
+    const status = activeStatus(store); const zone = deliveryZone(store); const favorite = state.favorites.includes(store.id);
+    const products = store.products.map(product => `<article class="store-product" data-product-detail="${product.id}" data-store-id="${store.id}"><img src="${escape(product.image_path || 'default-store.svg')}" alt="${escape(product.name)}" onerror="this.onerror=null;this.src='default-store.svg'"><div><h4>${escape(product.name)}</h4><p>${escape(product.description || 'Preparado especialmente para você.')}</p><b>${money(product.price)}</b></div><button class="add" data-add="${store.id}" data-product="${product.id}" ${status.key === 'closed' || (state.address && !zone) ? 'disabled' : ''} aria-label="Adicionar ${escape(product.name)}">+</button></article>`).join('') || '<p class="empty">Este cardápio ainda não tem produtos disponíveis.</p>';
+    qs('#storeView').innerHTML = `<div class="store-hero"><img src="${escape(store.products[0]?.image_path || 'default-store.svg')}" alt="${escape(store.name)}" onerror="this.onerror=null;this.src='default-store.svg'"><div class="store-hero-content"><span class="shop-status status-${status.key}"><i class="status-dot"></i>${status.label}</span><h2>${escape(store.name)}</h2><p>★ ${(store.rating || 0).toFixed(1)} · ${store.reviewCount} avaliações · ${escape(store.category_label || 'Delivery')}</p></div><button class="fav ${favorite ? 'on' : ''}" data-favorite="${store.id}" aria-label="Favoritar ${escape(store.name)}">${favorite ? '♥' : '♡'}</button></div><div class="store-summary"><span>🕒 Preparo ${store.products[0]?.prep_minutes || 20} min</span><span>🛵 Entrega ${zone ? money(zone.base_delivery_fee) : 'consulte sua região'}</span><span>Pedido mínimo ${money(store.min_order_amount)}</span></div><section class="store-menu"><div class="section-label"><h3>Cardápio</h3><span>${status.key === 'closed' ? 'Loja fechada' : 'Escolha seus itens'}</span></div>${products}</section>`;
+    modal('#storeModal');
+  }
+  function openProduct(storeId, productId) {
+    const store = storeById(storeId); const product = store?.products.find(item => item.id === productId); if (!store || !product) return;
+    const status = activeStatus(store);
+    qs('#productView').innerHTML = `<img class="product-hero" src="${escape(product.image_path || 'default-store.svg')}" alt="${escape(product.name)}" onerror="this.onerror=null;this.src='default-store.svg'"><section class="product-details"><p class="eyebrow">${escape(store.name)}</p><h2>${escape(product.name)}</h2><p>${escape(product.description || 'Uma escolha preparada com ingredientes selecionados.')}</p><div class="product-meta"><span>🕒 ${product.prep_minutes} min</span><span>★ ${(store.rating || 0).toFixed(1)}</span></div><div class="product-buy"><strong>${money(product.price)}</strong><button class="btn red" data-add="${store.id}" data-product="${product.id}" ${status.key === 'closed' ? 'disabled' : ''}>Adicionar à sacola</button></div></section>`;
+    modal('#productModal');
+  }
+  function renderProfile() {
+    const name = state.user?.profile?.full_name || state.user?.user?.email || 'Visitante';
+    const email = state.user?.user?.email || 'Entre para acessar sua conta';
+    qs('#profileContent').innerHTML = `<section class="profile-summary"><span class="profile-large-avatar">${escape(name.slice(0, 1).toUpperCase())}</span><div><h2>${escape(name)}</h2><p>${escape(email)}</p><span class="profile-points">✦ ${state.loyalty.points_balance || 0} pontos Vem Perto</span></div></section><section class="profile-links"><button data-profile-action="orders"><span>📦</span> Meus pedidos <b>›</b></button><button data-profile-action="favorites"><span>♡</span> Favoritos <b>›</b></button><button data-profile-action="coupons"><span>🏷️</span> Cupons e fidelidade <b>›</b></button><button data-profile-action="address"><span>⌖</span> Endereços <b>›</b></button><button data-profile-action="logout" class="profile-logout"><span>↗</span> Sair da conta <b>›</b></button></section>`;
   }
   function renderCatalog() {
     const term = qs('#search').value.trim().toLowerCase();
@@ -84,8 +115,12 @@
   }
   function renderCart() {
     const totals = cartTotals();
-    qs('#n').textContent = state.cart.reduce((total, item) => total + item.quantity, 0);
-    qs('#items').innerHTML = state.cart.length ? state.cart.map((item, index) => `<div class="row"><span><b>${escape(item.store.name)}</b><br><small>${escape(item.product.name)} · ${item.quantity}x</small></span><span class="right">${money(item.product.price * item.quantity)}</span><button class="link" data-remove="${index}">Remover</button></div>`).join('') : '<p class="notice emptycart">Sua sacola está vazia.</p>';
+    const quantity = state.cart.reduce((total, item) => total + item.quantity, 0);
+    qs('#n').textContent = quantity;
+    qs('#navCount').textContent = quantity;
+    qs('#bagTotal').textContent = money(totals.total);
+    qs('#cartStoreName').textContent = cartStore() ? `${cartStore().name} · ${quantity} ${quantity === 1 ? 'item' : 'itens'}` : 'Adicione itens para começar';
+    qs('#items').innerHTML = state.cart.length ? state.cart.map((item, index) => `<div class="row cart-item"><span><b>${escape(item.product.name)}</b><br><small>${escape(item.store.name)}</small><span class="qty-stepper"><button data-decrease="${index}" aria-label="Diminuir quantidade">−</button><b>${item.quantity}</b><button data-increase="${index}" aria-label="Aumentar quantidade">+</button></span></span><span class="right"><b>${money(item.product.price * item.quantity)}</b><button class="link" data-remove="${index}">Remover</button></span></div>`).join('') : '<p class="notice emptycart">Sua sacola está vazia.</p>';
     qs('#total').textContent = money(totals.total);
     qs('#couponFeedback').textContent = state.coupon ? `Cupom ${state.coupon.code} aplicado. O valor final será recalculado pelo servidor.` : '';
     return totals;
@@ -128,7 +163,11 @@
     const [addresses, favorites, orders, notices, loyalty] = await Promise.all([api.listAddresses(), api.getFavoriteIds(), api.customerOrders(), api.getNotifications(), api.loyalty()]);
     state.addresses = addresses; state.address = addresses[0] || null; state.favorites = favorites; state.orders = orders; state.notifications = notices; state.loyalty = loyalty; renderAddress(); renderCatalog(); renderCart(); renderNotifications();
   }
-  async function refreshAll() {
+  function renderSkeleton() {
+    qs('#grid').innerHTML = Array.from({ length: 3 }, () => '<article class="card shop-card skeleton-card"><div class="photo skeleton"></div><div class="in"><span class="skeleton line wide"></span><span class="skeleton line"></span><span class="skeleton line short"></span></div></article>').join('');
+  }
+  async function refreshAll(showLoading = false) {
+    if (showLoading) renderSkeleton();
     state.catalog = await api.catalog(); state.coupons = await api.getCoupons(); renderChips(); renderCatalog(); renderCoupons(); await refreshPrivate();
   }
   async function applyCoupon(code) {
@@ -137,8 +176,8 @@
     if (cartTotals().subtotal < Number(coupon.min_order_amount)) return toast(`Esse cupom exige pedido mínimo de ${money(coupon.min_order_amount)}.`);
     state.coupon = coupon; renderCart(); toast('Cupom aplicado.');
   }
-  async function addStoreProduct(storeId) {
-    const store = state.catalog.stores.find(item => item.id === storeId); const product = store?.products[0]; if (!store || !product) return;
+  async function addStoreProduct(storeId, productId = null) {
+    const store = state.catalog.stores.find(item => item.id === storeId); const product = productId ? store?.products.find(item => item.id === productId) : store?.products[0]; if (!store || !product) return;
     if (!state.address || !deliveryZone(store)) return toast('Defina um endereço atendido pela loja.');
     if (cartStore() && cartStore().id !== store.id) return toast('Finalize ou limpe a sacola antes de pedir de outra loja.');
     const existing = state.cart.find(item => item.product.id === product.id);
@@ -162,17 +201,31 @@
 
   qsa('.modal').forEach(item => item.addEventListener('click', event => { if (event.target === item) closeModals(); }));
   qs('#addressBtn').onclick = () => { if (state.address) { qs('#street').value = `${state.address.street}, ${state.address.number}`; qs('#neighborhood').value = state.address.neighborhood || 'Centro'; qs('#city').value = state.address.city; qs('#complement').value = state.address.complement || ''; } modal('#addressModal'); };
+  qs('#headerAddressBtn').onclick = qs('#addressBtn').onclick;
   qs('#addressForm').onsubmit = event => { event.preventDefault(); saveAddressFromForm().catch(error => toast(error.message)); };
   qs('#geolocationBtn').onclick = () => { if (!navigator.geolocation) return toast('Geolocalização indisponível neste navegador.'); navigator.geolocation.getCurrentPosition(() => { qs('#street').value = 'Localização atual'; toast('Localização obtida. Confirme seu bairro.'); }, () => toast('Não foi possível obter sua localização.')); };
   qs('#search').oninput = renderCatalog; qs('#chips').onclick = event => { const button = event.target.closest('[data-cat]'); if (!button) return; state.category = button.dataset.cat; state.favoritesOnly = false; renderChips(); renderCatalog(); };
   qs('#allStoresBtn').onclick = () => { state.favoritesOnly = false; renderCatalog(); }; qs('#favoritesFilterBtn').onclick = () => { if (!state.user) return modal('#loginModal'); state.favoritesOnly = true; renderCatalog(); };
-  qs('#grid').onclick = event => { const favorite = event.target.closest('[data-favorite]'); const add = event.target.closest('[data-add]'); if (favorite) api.toggleFavorite(favorite.dataset.favorite).then(on => { state.favorites = on ? [...state.favorites, favorite.dataset.favorite] : state.favorites.filter(id => id !== favorite.dataset.favorite); renderCatalog(); }).catch(error => { toast(error.message); modal('#loginModal'); }); if (add) addStoreProduct(add.dataset.add).catch(error => toast(error.message)); };
-  qs('#bag').onclick = () => qs('#cart').classList.add('show'); qs('#close').onclick = () => qs('#cart').classList.remove('show'); qs('#items').onclick = event => { const remove = event.target.closest('[data-remove]'); if (!remove) return; state.cart.splice(Number(remove.dataset.remove), 1); renderCart(); };
+  const handleFavorite = favorite => api.toggleFavorite(favorite.dataset.favorite).then(on => { state.favorites = on ? [...state.favorites, favorite.dataset.favorite] : state.favorites.filter(id => id !== favorite.dataset.favorite); renderCatalog(); }).catch(error => { toast(error.message); modal('#loginModal'); });
+  qs('#grid').onclick = event => { const favorite = event.target.closest('[data-favorite]'); const add = event.target.closest('[data-add]'); const store = event.target.closest('[data-store]'); if (favorite) return handleFavorite(favorite); if (add) return addStoreProduct(add.dataset.add, add.dataset.product).catch(error => toast(error.message)); if (store) openStore(store.dataset.store); };
+  qs('#grid').onkeydown = event => { if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[data-store]')) { event.preventDefault(); openStore(event.target.dataset.store); } };
+  qs('#storeView').onclick = event => { const favorite = event.target.closest('[data-favorite]'); const add = event.target.closest('[data-add]'); const product = event.target.closest('[data-product-detail]'); if (favorite) return handleFavorite(favorite); if (add) return addStoreProduct(add.dataset.add, add.dataset.product).catch(error => toast(error.message)); if (product) openProduct(product.dataset.storeId, product.dataset.productDetail); };
+  qs('#productView').onclick = event => { const add = event.target.closest('[data-add]'); if (add) addStoreProduct(add.dataset.add, add.dataset.product).catch(error => toast(error.message)); };
+  qs('#closeStore').onclick = closeModals; qs('#closeProduct').onclick = closeModals;
+  qs('#bag').onclick = () => qs('#cart').classList.add('show'); qs('#close').onclick = () => qs('#cart').classList.remove('show'); qs('#items').onclick = event => { const remove = event.target.closest('[data-remove]'); const increase = event.target.closest('[data-increase]'); const decrease = event.target.closest('[data-decrease]'); if (remove) state.cart.splice(Number(remove.dataset.remove), 1); if (increase) state.cart[Number(increase.dataset.increase)].quantity += 1; if (decrease) { const index = Number(decrease.dataset.decrease); if (state.cart[index].quantity === 1) state.cart.splice(index, 1); else state.cart[index].quantity -= 1; } renderCart(); };
   qs('#applyCoupon').onclick = () => applyCoupon(qs('#couponInput').value).catch(error => toast(error.message));
   qs('#loginBtn').onclick = () => modal('#loginModal'); qs('#signupBtn').onclick = () => modal('#signupModal'); qs('#goSignup').onclick = () => modal('#signupModal'); qs('#goLogin').onclick = () => modal('#loginModal');
   qs('#loginForm').onsubmit = async event => { event.preventDefault(); const email = qs('#loginEmail').value.trim(); if (!validEmail(email)) return showError('#loginError', 'E-mail inválido'); try { await api.signIn(email, qs('#loginPassword').value); await refreshPrivate(); qs('#loginSuccess').textContent = 'Login realizado com sucesso'; qs('#loginSuccess').style.display = 'block'; setTimeout(closeModals, 400); event.target.reset(); } catch (error) { showError('#loginError', error.message); } };
   qs('#signupForm').onsubmit = async event => { event.preventDefault(); const name = qs('#signupName').value.trim(), email = qs('#signupEmail').value.trim(), phone = qs('#signupPhone').value.trim(), password = qs('#signupPassword').value, confirm = qs('#signupConfirm').value; if (!validEmail(email)) return showError('#signupError', 'E-mail inválido'); if (password !== confirm) return showError('#signupError', 'As senhas não são iguais'); try { const result = await api.signUpCustomer({ name, email, phone, password }); event.target.reset(); if (result.confirmationRequired) { showError('#signupError', 'Confira seu e-mail para confirmar a conta e depois entre.'); return; } await refreshPrivate(); closeModals(); toast('Conta criada com sucesso. Você já está conectado.'); } catch (error) { showError('#signupError', error.message); } };
   qs('#logoutBtn').onclick = () => api.signOut().then(async () => { await refreshPrivate(); toast('Você saiu da sua conta.'); }).catch(error => toast(error.message));
+  qs('#profileBtn').onclick = () => { if (!state.user) return modal('#loginModal'); renderProfile(); modal('#profileModal'); };
+  qs('#closeProfile').onclick = closeModals;
+  qs('#profileContent').onclick = event => { const action = event.target.closest('[data-profile-action]')?.dataset.profileAction; if (!action) return; if (action === 'orders') { closeModals(); renderOrders().then(() => modal('#ordersModal')); } if (action === 'favorites') { closeModals(); state.favoritesOnly = true; renderCatalog(); } if (action === 'coupons') { closeModals(); renderCoupons(); modal('#couponsModal'); } if (action === 'address') { closeModals(); qs('#addressBtn').click(); } if (action === 'logout') qs('#logoutBtn').click(); };
+  const storedTheme = (() => { try { return localStorage.getItem('vp-theme'); } catch { return null; } })();
+  const setTheme = theme => { document.documentElement.dataset.theme = theme; qs('#themeBtn').textContent = theme === 'dark' ? '☀' : '☾'; qs('#themeBtn').setAttribute('aria-label', theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'); try { localStorage.setItem('vp-theme', theme); } catch {} };
+  setTheme(storedTheme || (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  qs('#themeBtn').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  qsa('.bottom-nav button').forEach(button => button.onclick = () => { qsa('.bottom-nav button').forEach(item => item.classList.toggle('active', item === button)); const target = button.dataset.nav; if (target === 'home') return window.scrollTo({ top: 0, behavior: 'smooth' }); if (target === 'search') { qs('#searchSection').scrollIntoView({ behavior: 'smooth', block: 'center' }); return setTimeout(() => qs('#search').focus(), 300); } if (target === 'bag') return qs('#bag').click(); if (target === 'orders') { if (!state.user) return modal('#loginModal'); return qs('#ordersBtn').click(); } if (target === 'profile') qs('#profileBtn').click(); });
   qs('#order').onclick = () => placeOrder().catch(error => toast(error.message)); qs('#ordersBtn').onclick = () => renderOrders().then(() => modal('#ordersModal')); qs('#closeOrders').onclick = closeModals; qs('#ordersList').onclick = event => { const track = event.target.closest('[data-track]'); const chat = event.target.closest('[data-chat-order]'); const review = event.target.closest('[data-review]'); if (track) trackOrder(track.dataset.track); if (chat) { state.chatOrderId = chat.dataset.chatOrder; renderMessages().then(() => modal('#chatModal')); } if (review) { state.reviewOrderId = review.dataset.review; qs('#reviewOrderText').textContent = 'Conte como foi sua experiência neste pedido.'; modal('#reviewModal'); } };
   qs('#closeTracking').onclick = closeModals;
   const ratings = { food: 0, delivery: 0, service: 0 }; qsa('.review-stars').forEach(group => group.onclick = event => { const button = event.target.closest('button'); if (!button) return; const value = [...group.children].indexOf(button) + 1; ratings[group.dataset.rating] = value; [...group.children].forEach((star, index) => star.classList.toggle('on', index < value)); });
@@ -186,7 +239,7 @@
 
   (async () => {
     if (!api) return toast('Não foi possível iniciar a conexão segura.');
-    await refreshAll();
+    await refreshAll(true);
     state.unlisten = await api.subscribe(() => refreshAll().catch(error => console.warn(error)));
     api.db.auth.onAuthStateChange(() => setTimeout(() => refreshPrivate().catch(error => console.warn(error)), 0));
   })().catch(error => toast(error.message));
