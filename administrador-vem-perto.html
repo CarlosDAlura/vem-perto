@@ -1,11 +1,180 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vem Perto | Administração</title><style>
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vem Perto | AdministraÃ§Ã£o</title>
+<style>
 :root{--red:#e82036;--ink:#27272d;--muted:#6d6d76;--line:#e8e8ec;--bg:#f7f7f9;--nav:#21212a}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px Arial,sans-serif;color:var(--ink)}header{position:sticky;top:0;z-index:3;background:var(--nav);color:#fff;padding:15px max(4%,18px);display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-size:24px;font-weight:800;color:#fff}.brand b{color:#ff5265}.admin{font-size:12px;background:#41414d;padding:7px 10px;border-radius:99px}.wrap{max-width:1280px;margin:auto;padding:24px 18px 60px}.intro{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:18px}.intro h1{margin:0 0 6px;font-size:25px}.intro p{margin:0;color:var(--muted)}.metric{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.metric div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.metric span{color:var(--muted);font-size:12px}.metric b{display:block;font-size:22px;margin-top:6px}.layout{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}.card.wide{grid-column:1/-1}.card h2{margin:0 0 14px;font-size:17px}.record{border-top:1px solid var(--line);padding:12px 0}.record:first-child{border-top:0;padding-top:0}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.small{font-size:12px;color:var(--muted)}.pill{font-size:11px;padding:5px 8px;border-radius:99px;font-weight:700;background:#f1f1f4;color:#4d4d56}.pill.pending{background:#fff3df;color:#a25d00}.pill.approved,.pill.open{background:#e6f7ef;color:#087345}.pill.blocked{background:#fff0f1;color:#b31125}.pill.danger{background:#fff0f1;color:#b31125}button{border:0;border-radius:8px;background:var(--red);color:#fff;font-weight:700;padding:9px 10px;cursor:pointer;font-size:12px}button.alt{background:#efeff2;color:#35353c}button.dark{background:#303039}button:disabled{opacity:.4}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}input,select,textarea{width:100%;border:1px solid #d9d9df;border-radius:8px;padding:9px;background:#fff;font:inherit}textarea{min-height:70px}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.form .full{grid-column:1/-1}.form label{font-size:12px;color:var(--muted)}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:16px}.tabs a{white-space:nowrap;text-decoration:none;color:#52525b;background:#eeeef1;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:700}.tabs a:hover{background:#ffdfe3;color:#a10e20}.toast{display:none;position:fixed;right:16px;bottom:16px;background:#282832;color:#fff;padding:12px;border-radius:10px;z-index:5}@media(max-width:900px){.metric{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:550px){.metric{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.intro{display:block}.intro p{margin-top:8px}.wrap{padding:18px 12px 45px}}
-</style></head><body><header><div class="brand">vem <b>perto</b></div><span class="admin">ADMINISTRADOR · central</span></header><main class="wrap"><section class="intro"><div><h1>Central de operações</h1><p>Esta visão lê e altera os mesmos dados dos painéis de cliente, loja e motoboy.</p></div></section><nav class="tabs"><a href="#approvals">Aprovações</a><a href="#orders">Pedidos</a><a href="#users">Usuários</a><a href="#marketing">Cupons e avisos</a><a href="#catalog">Categorias</a><a href="#audit">Auditoria</a></nav><section class="metric" id="metrics"></section><section class="layout"><div class="card" id="approvals"><h2>Aprovações pendentes</h2><div id="approvalsList"></div></div><div class="card" id="orders"><h2>Pedidos em tempo real</h2><div id="ordersList"></div></div><div class="card wide" id="users"><h2>Clientes, lojistas e motoboys</h2><div id="usersList"></div></div><div class="card" id="marketing"><h2>Criar ou atualizar cupom</h2><form id="couponForm" class="form"><label>Código<input name="code" required placeholder="EX.: VEM10"></label><label>Tipo<select name="type"><option value="percent">Desconto (%)</option><option value="fixed">Desconto (R$)</option><option value="shipping">Frete grátis</option></select></label><label>Valor<input type="number" name="value" step=".01" value="10"></label><label>Pedido mínimo<input type="number" name="minOrder" step=".01" value="25"></label><button class="full">Salvar cupom central</button></form><div id="coupons" style="margin-top:15px"></div></div><div class="card"><h2>Notificação da plataforma</h2><form id="noticeForm" class="form"><label class="full">Título<input name="title" required placeholder="Ex.: Novidade no Vem Perto"></label><label class="full">Mensagem<textarea name="body" required placeholder="Escreva o aviso para os usuários ativos"></textarea></label><label>Destinatário<select name="target"><option value="all">Todos os usuários</option><option value="customers">Clientes</option><option value="merchants">Lojistas</option><option value="couriers">Motoboys</option></select></label><button>Enviar aviso</button></form><p class="small">No modo atual, as notificações aparecem dentro dos painéis que estão no mesmo navegador.</p></div><div class="card" id="catalog"><h2>Categorias e taxas</h2><form id="categoryForm" class="form"><label class="full">Categorias (separe por vírgula)<input name="categories" required></label><button>Salvar categorias</button></form><p class="small" id="rates" style="margin-top:14px"></p></div><div class="card" id="audit"><h2>Auditoria do administrador</h2><div id="auditList"></div></div></section></main><div class="toast" id="toast"></div><script src="vem-perto-core.js"></script><script>
+</style>
+</head>
+<body>
+<header>
+<div class="brand">vem <b>perto</b>
+</div>
+<span class="admin">ADMINISTRADOR Â· central</span>
+</header>
+<main class="wrap">
+<section class="intro">
+<div>
+<h1>Central de operaÃ§Ãµes</h1>
+<p>Esta visÃ£o lÃª e altera os mesmos dados dos painÃ©is de cliente, loja e motoboy.</p>
+</div>
+</section>
+<nav class="tabs">
+<a href="#approvals">AprovaÃ§Ãµes</a>
+<a href="#orders">Pedidos</a>
+<a href="#users">UsuÃ¡rios</a>
+<a href="#marketing">Cupons e avisos</a>
+<a href="#catalog">Categorias</a>
+<a href="#audit">Auditoria</a>
+</nav>
+<section class="metric" id="metrics">
+</section>
+<section class="layout">
+<div class="card" id="approvals">
+<h2>AprovaÃ§Ãµes pendentes</h2>
+<div id="approvalsList">
+</div>
+</div>
+<div class="card" id="orders">
+<h2>Pedidos em tempo real</h2>
+<div id="ordersList">
+</div>
+</div>
+<div class="card wide" id="users">
+<h2>Clientes, lojistas e motoboys</h2>
+<div id="usersList">
+</div>
+</div>
+<div class="card" id="marketing">
+<h2>Criar ou atualizar cupom</h2>
+<form id="couponForm" class="form">
+<label>CÃ³digo<input name="code" required placeholder="EX.: VEM10">
+</label>
+<label>Tipo<select name="type">
+<option value="percent">Desconto (%)</option>
+<option value="fixed">Desconto (R$)</option>
+<option value="shipping">Frete grÃ¡tis</option>
+</select>
+</label>
+<label>Valor<input type="number" name="value" step=".01" value="10">
+</label>
+<label>Pedido mÃ­nimo<input type="number" name="minOrder" step=".01" value="25">
+</label>
+<button class="full">Salvar cupom central</button>
+</form>
+<div id="coupons" style="margin-top:15px">
+</div>
+</div>
+<div class="card">
+<h2>NotificaÃ§Ã£o da plataforma</h2>
+<form id="noticeForm" class="form">
+<label class="full">TÃ­tulo<input name="title" required placeholder="Ex.: Novidade no Vem Perto">
+</label>
+<label class="full">Mensagem<textarea name="body" required placeholder="Escreva o aviso para os usuÃ¡rios ativos">
+</textarea>
+</label>
+<label>DestinatÃ¡rio<select name="target">
+<option value="all">Todos os usuÃ¡rios</option>
+<option value="customers">Clientes</option>
+<option value="merchants">Lojistas</option>
+<option value="couriers">Motoboys</option>
+</select>
+</label>
+<button>Enviar aviso</button>
+</form>
+<p class="small">No modo atual, as notificaÃ§Ãµes aparecem dentro dos painÃ©is que estÃ£o no mesmo navegador.</p>
+</div>
+<div class="card" id="catalog">
+<h2>Categorias e taxas</h2>
+<form id="categoryForm" class="form">
+<label class="full">Categorias (separe por vÃ­rgula)<input name="categories" required>
+</label>
+<button>Salvar categorias</button>
+</form>
+<p class="small" id="rates" style="margin-top:14px">
+</p>
+</div>
+<div class="card" id="audit">
+<h2>Auditoria do administrador</h2>
+<div id="auditList">
+</div>
+</div>
+</section>
+</main>
+<div class="toast" id="toast">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="vem-perto-supabase.js"></script>
+<script src="administrador-supabase.js"></script>
+<script type="text/plain" data-legacy-local-demo>
 const core=window.VemPertoCore,admin={role:'admin',id:'ADMIN-DEMO'},q=s=>document.querySelector(s),money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const toast=t=>{q('#toast').textContent=t;q('#toast').style.display='block';setTimeout(()=>q('#toast').style.display='none',3000)};const state=()=>core.getState(),pill=v=>`<span class="pill ${v}">${v}</span>`;
 function updateShop(id,status){try{core.updateShop(id,{status},admin);toast(status==='approved'?'Loja aprovada.':'Loja atualizada.')}catch(e){toast(e.message)}}
 function updateCourier(id,status){try{core.updateCourier(id,{status,online:status==='approved'},admin);toast(status==='approved'?'Motoboy aprovado.':'Cadastro atualizado.')}catch(e){toast(e.message)}}
-function blockUser(id,status){try{core.updateUser(id,{status},admin);toast(status==='blocked'?'Usuário bloqueado.':'Usuário liberado.')}catch(e){toast(e.message)}}
-function intervene(id){const next=prompt('Novo status central do pedido:', 'Cancelado');if(!next)return;try{core.transitionOrder(id,next,admin);toast('Intervenção registrada na auditoria.')}catch(e){toast(e.message)}}
-function render(){const s=state(),revenue=s.orders.reduce((sum,o)=>sum+(o.status==='Entregue'?o.financial.platformRevenue:0),0),active=s.orders.filter(o=>!['Entregue','Cancelado','Recusado pela loja'].includes(o.status)),pendingShops=s.shops.filter(x=>x.status==='pending'),pendingCouriers=s.couriers.filter(x=>x.status==='pending'),shop=id=>s.shops.find(x=>x.id===id),user=id=>s.users.find(x=>x.id===id);q('#metrics').innerHTML=`<div><span>Pedidos ativos</span><b>${active.length}</b></div><div><span>Pedidos concluídos</span><b>${s.orders.filter(x=>x.status==='Entregue').length}</b></div><div><span>Faturamento total</span><b>${money(s.orders.reduce((n,o)=>n+o.financial.total,0))}</b></div><div><span>Receita Vem Perto</span><b>${money(revenue)}</b></div><div><span>Avaliações</span><b>${s.reviews.length}</b></div>`;q('#approvalsList').innerHTML=(pendingShops.map(x=>`<article class="record"><div class="row"><b>${x.name}</b>${pill('pending')}</div><p class="small">${x.category} · ${x.documents?.join(', ')||'Sem documentos informados'}</p><div class="actions"><button onclick="updateShop('${x.id}','approved')">Aprovar loja</button><button class="alt" onclick="updateShop('${x.id}','rejected')">Rejeitar</button></div></article>`).join('')+pendingCouriers.map(x=>`<article class="record"><div class="row"><b>${x.name} · motoboy</b>${pill('pending')}</div><p class="small">${x.phone} · ${x.documents?.join(', ')||'Sem documentos informados'}</p><div class="actions"><button onclick="updateCourier('${x.id}','approved')">Aprovar motoboy</button><button class="alt" onclick="updateCourier('${x.id}','rejected')">Rejeitar</button></div></article>`).join(''))||'<p class="small">Nenhuma aprovação pendente.</p>';q('#ordersList').innerHTML=s.orders.length?s.orders.slice(0,12).map(o=>`<article class="record"><div class="row"><b>${o.id}</b>${pill(o.status.includes('Entregue')?'approved':o.status.includes('Cancelado')?'danger':'pending')}</div><p class="small">${shop(o.shopId)?.name||'Loja'} · ${o.items.map(i=>i.name).join(', ')} · ${money(o.financial.total)}</p><div class="actions"><button class="alt" onclick="intervene('${o.id}')">Intervir com auditoria</button></div></article>`).join(''):'<p class="small">Os pedidos criados pelos clientes aparecem aqui.</p>';q('#usersList').innerHTML=s.users.length?s.users.map(u=>`<article class="record"><div class="row"><div><b>${u.name}</b><span class="small"> · ${(u.roles||[]).join(', ')}</span></div>${pill(u.status||'active')}</div><p class="small">${u.email||'Sem e-mail'} · ${u.phone||'Sem telefone'}</p><div class="actions"><button class="alt" onclick="blockUser('${u.id}','${u.status==='blocked'?'active':'blocked'}')">${u.status==='blocked'?'Desbloquear':'Bloquear'}</button></div></article>`).join(''):'<p class="small">Contas de clientes aparecem depois do cadastro.</p>';q('#coupons').innerHTML=s.coupons.map(c=>`<div class="record"><div class="row"><b>${c.code}</b>${pill(c.active?'approved':'blocked')}</div><span class="small">${c.type==='percent'?c.value+'%':c.type==='fixed'?money(c.value):'Frete grátis'} · mínimo ${money(c.minOrder)}</span></div>`).join('');q('#categoryForm categories').value=s.categories.join(', ');q('#rates').textContent=`Comissão da plataforma: ${(s.finance.serviceRate*100).toFixed(0)}% · Repasse da entrega ao motoboy: ${(s.finance.courierRate*100).toFixed(0)}%.`;q('#auditList').innerHTML=s.audit.slice(0,10).map(a=>`<article class="record"><b>${a.action}</b><p class="small">${new Date(a.at).toLocaleString('pt-BR')} · pedido ${a.orderId||'—'}</p></article>`).join('')||'<p class="small">As alterações administrativas ficam registradas aqui.</p>'}
-q('#couponForm').onsubmit=e=>{e.preventDefault();try{core.upsertCoupon(Object.fromEntries(new FormData(e.target)),admin);e.target.reset();toast('Cupom salvo na fonte central.')}catch(err){toast(err.message)}};q('#noticeForm').onsubmit=e=>{e.preventDefault();try{const f=Object.fromEntries(new FormData(e.target)),users=state().users.filter(u=>f.target==='all'||(f.target==='customers'&&u.roles.includes('customer'))||(f.target==='merchants'&&u.roles.includes('merchant'))||(f.target==='couriers'&&u.roles.includes('courier'))).map(u=>u.id);core.sendNotification({userIds:users,title:f.title,body:f.body},admin);e.target.reset();toast('Notificação criada para '+users.length+' pessoa(s).')}catch(err){toast(err.message)}};q('#categoryForm').onsubmit=e=>{e.preventDefault();try{core.updateCategories(q('#categoryForm categories').value.split(','),admin);toast('Categorias atualizadas.')}catch(err){toast(err.message)}};core.subscribe(render);render();
-</script></body></html>
+function blockUser(id,status){try{core.updateUser(id,{status},admin);toast(status==='blocked'?'UsuÃ¡rio bloqueado.':'UsuÃ¡rio liberado.')}catch(e){toast(e.message)}}
+function intervene(id){const next=prompt('Novo status central do pedido:', 'Cancelado');if(!next)return;try{core.transitionOrder(id,next,admin);toast('IntervenÃ§Ã£o registrada na auditoria.')}catch(e){toast(e.message)}}
+function render(){const s=state(),revenue=s.orders.reduce((sum,o)=>sum+(o.status==='Entregue'?o.financial.platformRevenue:0),0),active=s.orders.filter(o=>!['Entregue','Cancelado','Recusado pela loja'].includes(o.status)),pendingShops=s.shops.filter(x=>x.status==='pending'),pendingCouriers=s.couriers.filter(x=>x.status==='pending'),shop=id=>s.shops.find(x=>x.id===id),user=id=>s.users.find(x=>x.id===id);q('#metrics').innerHTML=`<div>
+<span>Pedidos ativos</span>
+<b>${active.length}</b>
+</div>
+<div>
+<span>Pedidos concluÃ­dos</span>
+<b>${s.orders.filter(x=>x.status==='Entregue').length}</b>
+</div>
+<div>
+<span>Faturamento total</span>
+<b>${money(s.orders.reduce((n,o)=>n+o.financial.total,0))}</b>
+</div>
+<div>
+<span>Receita Vem Perto</span>
+<b>${money(revenue)}</b>
+</div>
+<div>
+<span>AvaliaÃ§Ãµes</span>
+<b>${s.reviews.length}</b>
+</div>`;q('#approvalsList').innerHTML=(pendingShops.map(x=>`<article class="record">
+<div class="row">
+<b>${x.name}</b>${pill('pending')}</div>
+<p class="small">${x.category} Â· ${x.documents?.join(', ')||'Sem documentos informados'}</p>
+<div class="actions">
+<button onclick="updateShop('${x.id}','approved')">Aprovar loja</button>
+<button class="alt" onclick="updateShop('${x.id}','rejected')">Rejeitar</button>
+</div>
+</article>`).join('')+pendingCouriers.map(x=>`<article class="record">
+<div class="row">
+<b>${x.name} Â· motoboy</b>${pill('pending')}</div>
+<p class="small">${x.phone} Â· ${x.documents?.join(', ')||'Sem documentos informados'}</p>
+<div class="actions">
+<button onclick="updateCourier('${x.id}','approved')">Aprovar motoboy</button>
+<button class="alt" onclick="updateCourier('${x.id}','rejected')">Rejeitar</button>
+</div>
+</article>`).join(''))||'<p class="small">Nenhuma aprovaÃ§Ã£o pendente.</p>';q('#ordersList').innerHTML=s.orders.length?s.orders.slice(0,12).map(o=>`<article class="record">
+<div class="row">
+<b>${o.id}</b>${pill(o.status.includes('Entregue')?'approved':o.status.includes('Cancelado')?'danger':'pending')}</div>
+<p class="small">${shop(o.shopId)?.name||'Loja'} Â· ${o.items.map(i=>i.name).join(', ')} Â· ${money(o.financial.total)}</p>
+<div class="actions">
+<button class="alt" onclick="intervene('${o.id}')">Intervir com auditoria</button>
+</div>
+</article>`).join(''):'<p class="small">Os pedidos criados pelos clientes aparecem aqui.</p>';q('#usersList').innerHTML=s.users.length?s.users.map(u=>`<article class="record">
+<div class="row">
+<div>
+<b>${u.name}</b>
+<span class="small"> Â· ${(u.roles||[]).join(', ')}</span>
+</div>${pill(u.status||'active')}</div>
+<p class="small">${u.email||'Sem e-mail'} Â· ${u.phone||'Sem telefone'}</p>
+<div class="actions">
+<button class="alt" onclick="blockUser('${u.id}','${u.status==='blocked'?'active':'blocked'}')">${u.status==='blocked'?'Desbloquear':'Bloquear'}</button>
+</div>
+</article>`).join(''):'<p class="small">Contas de clientes aparecem depois do cadastro.</p>';q('#coupons').innerHTML=s.coupons.map(c=>`<div class="record">
+<div class="row">
+<b>${c.code}</b>${pill(c.active?'approved':'blocked')}</div>
+<span class="small">${c.type==='percent'?c.value+'%':c.type==='fixed'?money(c.value):'Frete grÃ¡tis'} Â· mÃ­nimo ${money(c.minOrder)}</span>
+</div>`).join('');q('#categoryForm categories').value=s.categories.join(', ');q('#rates').textContent=`ComissÃ£o da plataforma: ${(s.finance.serviceRate*100).toFixed(0)}% Â· Repasse da entrega ao motoboy: ${(s.finance.courierRate*100).toFixed(0)}%.`;q('#auditList').innerHTML=s.audit.slice(0,10).map(a=>`<article class="record">
+<b>${a.action}</b>
+<p class="small">${new Date(a.at).toLocaleString('pt-BR')} Â· pedido ${a.orderId||'â€”'}</p>
+</article>`).join('')||'<p class="small">As alteraÃ§Ãµes administrativas ficam registradas aqui.</p>'}
+q('#couponForm').onsubmit=e=>{e.preventDefault();try{core.upsertCoupon(Object.fromEntries(new FormData(e.target)),admin);e.target.reset();toast('Cupom salvo na fonte central.')}catch(err){toast(err.message)}};q('#noticeForm').onsubmit=e=>{e.preventDefault();try{const f=Object.fromEntries(new FormData(e.target)),users=state().users.filter(u=>f.target==='all'||(f.target==='customers'&&u.roles.includes('customer'))||(f.target==='merchants'&&u.roles.includes('merchant'))||(f.target==='couriers'&&u.roles.includes('courier'))).map(u=>u.id);core.sendNotification({userIds:users,title:f.title,body:f.body},admin);e.target.reset();toast('NotificaÃ§Ã£o criada para '+users.length+' pessoa(s).')}catch(err){toast(err.message)}};q('#categoryForm').onsubmit=e=>{e.preventDefault();try{core.updateCategories(q('#categoryForm categories').value.split(','),admin);toast('Categorias atualizadas.')}catch(err){toast(err.message)}};core.subscribe(render);render();
+</script>
+</body>
+</html>
