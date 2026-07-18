@@ -1,9 +1,92 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vem Perto | Motoboy</title><style>
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vem Perto | Motoboy</title>
+<style>
 :root{--red:#e82036;--ink:#26262c;--muted:#6d6d75;--line:#e8e8ed;--bg:#f7f7f9;--green:#118a55}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px Arial,sans-serif;color:var(--ink)}header{background:white;padding:17px max(5%,18px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:15px;position:sticky;top:0;z-index:2}.brand{font-size:25px;font-weight:800;color:var(--red)}.tag,.status{font-size:12px;font-weight:700;border-radius:99px;padding:7px 10px}.tag{background:#fff0f1;color:#ba1728}.status{background:#e6f7ef;color:#087345}.wrap{max-width:1050px;margin:auto;padding:28px 18px 60px}.hero{background:linear-gradient(135deg,#21212a,#454552);color:#fff;border-radius:19px;padding:25px;display:flex;align-items:center;justify-content:space-between;gap:15px}.hero h1{margin:0 0 6px;font-size:25px}.hero p{margin:0;color:#d6d6dd}.switch{display:flex;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:9px;color:#25252a;font-weight:700}.switch input{accent-color:var(--green);width:20px;height:20px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:20px}.card h2{font-size:18px;margin:0 0 15px}.metric{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric div{border:1px solid var(--line);border-radius:12px;padding:13px}.metric b{font-size:20px;display:block}.small{font-size:12px;color:var(--muted)}.delivery{padding:14px 0;border-top:1px solid var(--line)}.delivery:first-child{border-top:0;padding-top:0}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.status.busy{background:#fff3df;color:#a45d00}.status.done{background:#eeeeff;color:#4a46b8}button{border:0;border-radius:9px;background:var(--red);color:#fff;padding:10px 12px;font-weight:700;cursor:pointer}button.alt{background:#f0f0f3;color:#35353d}button:disabled{opacity:.45}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.notice{padding:11px;background:#f7f7f9;border-radius:10px;color:var(--muted);font-size:13px}label{font-size:12px;color:var(--muted)}input{width:100%;padding:10px;border:1px solid #d9d9df;border-radius:9px}.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form .wide{grid-column:1/-1}.toast{display:none;position:fixed;right:16px;bottom:16px;color:#fff;background:#282832;border-radius:10px;padding:12px;z-index:3}@media(max-width:750px){.grid{grid-template-columns:1fr}.hero{display:block}.switch{margin-top:17px;width:max-content}.form{grid-template-columns:1fr}}
-</style></head><body><header><div><span class="brand">vem perto</span> <span class="tag">MOTOBOY</span></div><span id="identity" class="small"></span></header><main class="wrap"><section class="hero"><div><h1>Suas corridas vêm do mesmo pedido.</h1><p>Ao aceitar uma entrega, cliente, loja e administrador recebem a atualização.</p></div><label class="switch"><input id="online" type="checkbox"> Ficar online</label></section><section class="grid"><div class="card"><h2>Corridas disponíveis e em andamento</h2><div id="deliveries"></div></div><div><div class="card"><h2>Ganhos centralizados</h2><div class="metric" id="metrics"></div><p class="notice">O valor de cada entrega é calculado uma vez no pedido e repassado para o seu histórico.</p></div><div class="card" style="margin-top:18px"><h2>Solicitar cadastro</h2><p class="small">Envie seus dados e documentos. O administrador precisa aprovar antes de liberar corridas.</p><form id="courierForm" class="form"><label>Nome<input name="name" required></label><label>Telefone<input name="phone" required></label><label class="wide">E-mail<input type="email" name="email" required></label><label class="wide">Documentos<input name="documents" placeholder="CNH, RG, comprovante"></label><button class="wide">Enviar para aprovação</button></form></div></div></section></main><div class="toast" id="toast"></div><script src="vem-perto-core.js"></script><script>
+</style>
+</head>
+<body>
+<header>
+<div>
+<span class="brand">vem perto</span>
+<span class="tag">MOTOBOY</span>
+</div>
+<span id="identity" class="small">
+</span>
+</header>
+<main class="wrap">
+<section class="hero">
+<div>
+<h1>Suas corridas vÃªm do mesmo pedido.</h1>
+<p>Ao aceitar uma entrega, cliente, loja e administrador recebem a atualizaÃ§Ã£o.</p>
+</div>
+<label class="switch">
+<input id="online" type="checkbox"> Ficar online</label>
+</section>
+<section class="grid">
+<div class="card">
+<h2>Corridas disponÃ­veis e em andamento</h2>
+<div id="deliveries">
+</div>
+</div>
+<div>
+<div class="card">
+<h2>Ganhos centralizados</h2>
+<div class="metric" id="metrics">
+</div>
+<p class="notice">O valor de cada entrega Ã© calculado uma vez no pedido e repassado para o seu histÃ³rico.</p>
+</div>
+<div class="card" style="margin-top:18px">
+<h2>Solicitar cadastro</h2>
+<p class="small">Envie seus dados e documentos. O administrador precisa aprovar antes de liberar corridas.</p>
+<form id="courierForm" class="form">
+<label>Nome<input name="name" required>
+</label>
+<label>Telefone<input name="phone" required>
+</label>
+<label class="wide">E-mail<input type="email" name="email" required>
+</label>
+<label class="wide">Documentos<input name="documents" type="file" multiple accept="application/pdf,image/jpeg,image/png">
+</label>
+<button class="wide">Enviar para aprovaÃ§Ã£o</button>
+</form>
+</div>
+</div>
+</section>
+</main>
+<div class="toast" id="toast">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="vem-perto-supabase.js"></script>
+<script src="motoboy-supabase.js"></script>
+<script type="text/plain" data-legacy-local-demo>
 const core=window.VemPertoCore,courierActor={role:'courier',id:'COURIER-DEMO',courierId:'COURIER-DEMO'},q=s=>document.querySelector(s),money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const toast=t=>{q('#toast').textContent=t;q('#toast').style.display='block';setTimeout(()=>q('#toast').style.display='none',2800)};const state=()=>core.getState();
-function nextAction(order){const map={'Aguardando motoboy':['Aceitar corrida','Motoboy atribuído'],'Motoboy atribuído':['Ir até a loja','Motoboy a caminho da loja'],'Motoboy a caminho da loja':['Confirmar retirada','Pedido retirado'],'Pedido retirado':['A caminho do cliente','A caminho do cliente'],'A caminho do cliente':['Confirmar entrega','Entregue']}[order.status];return map?`<button onclick="advance('${order.id}','${map[1]}')">${map[0]}</button>`:''}
+function nextAction(order){const map={'Aguardando motoboy':['Aceitar corrida','Motoboy atribuÃ­do'],'Motoboy atribuÃ­do':['Ir atÃ© a loja','Motoboy a caminho da loja'],'Motoboy a caminho da loja':['Confirmar retirada','Pedido retirado'],'Pedido retirado':['A caminho do cliente','A caminho do cliente'],'A caminho do cliente':['Confirmar entrega','Entregue']}[order.status];return map?`<button onclick="advance('${order.id}','${map[1]}')">${map[0]}</button>`:''}
 function advance(id,next){try{core.transitionOrder(id,next,courierActor);toast('Entrega atualizada: '+next)}catch(e){toast(e.message)}}
-function render(){const s=state(),courier=s.couriers.find(c=>c.id==='COURIER-DEMO'),shop=id=>s.shops.find(x=>x.id===id),available=s.orders.filter(o=>o.status==='Aguardando motoboy'),mine=s.orders.filter(o=>o.courierId===courier.id),items=[...available,...mine.filter(o=>!available.some(x=>x.id===o.id))],delivered=mine.filter(o=>o.status==='Entregue'),earned=mine.reduce((sum,o)=>sum+(o.status==='Entregue'?o.financial.courierNet:0),0);q('#identity').textContent=courier.name+' · '+(courier.status==='approved'?'Aprovado':'Em análise');q('#online').checked=courier.online;q('#online').disabled=courier.status!=='approved';q('#metrics').innerHTML=`<div><span>Entregas concluídas</span><b>${delivered.length}</b></div><div><span>Ganhos</span><b>${money(earned)}</b></div>`;q('#deliveries').innerHTML=items.length?items.map(o=>{const st=o.status==='Entregue'?'done':o.courierId?'busy':'';return `<article class="delivery"><div class="row"><b>${o.id}</b><span class="status ${st}">${o.status}</span></div><p class="small">${shop(o.shopId)?.name||'Loja'} → ${o.address||'Endereço do cliente'}</p><div class="row"><span>Você recebe <b>${money(o.financial.courierNet)}</b></span><span class="small">${o.items.map(i=>i.name).join(', ')}</span></div><div class="actions">${nextAction(o)}</div></article>`}).join(''):'<p class="notice">Nenhuma corrida disponível no momento. Fique online para receber pedidos aguardando motoboy.</p>'}
-q('#online').onchange=e=>{try{core.setCourierOnline('COURIER-DEMO',e.target.checked,courierActor);toast(e.target.checked?'Você está online.':'Você está offline.')}catch(err){toast(err.message)}};q('#courierForm').onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));try{core.registerCourier({...f,documents:f.documents.split(',').map(x=>x.trim()).filter(Boolean)});e.target.reset();toast('Cadastro enviado para aprovação.')}catch(err){toast(err.message)}};core.subscribe(render);render();
-</script></body></html>
+function render(){const s=state(),courier=s.couriers.find(c=>c.id==='COURIER-DEMO'),shop=id=>s.shops.find(x=>x.id===id),available=s.orders.filter(o=>o.status==='Aguardando motoboy'),mine=s.orders.filter(o=>o.courierId===courier.id),items=[...available,...mine.filter(o=>!available.some(x=>x.id===o.id))],delivered=mine.filter(o=>o.status==='Entregue'),earned=mine.reduce((sum,o)=>sum+(o.status==='Entregue'?o.financial.courierNet:0),0);q('#identity').textContent=courier.name+' Â· '+(courier.status==='approved'?'Aprovado':'Em anÃ¡lise');q('#online').checked=courier.online;q('#online').disabled=courier.status!=='approved';q('#metrics').innerHTML=`<div>
+<span>Entregas concluÃ­das</span>
+<b>${delivered.length}</b>
+</div>
+<div>
+<span>Ganhos</span>
+<b>${money(earned)}</b>
+</div>`;q('#deliveries').innerHTML=items.length?items.map(o=>{const st=o.status==='Entregue'?'done':o.courierId?'busy':'';return `<article class="delivery">
+<div class="row">
+<b>${o.id}</b>
+<span class="status ${st}">${o.status}</span>
+</div>
+<p class="small">${shop(o.shopId)?.name||'Loja'} â†’ ${o.address||'EndereÃ§o do cliente'}</p>
+<div class="row">
+<span>VocÃª recebe <b>${money(o.financial.courierNet)}</b>
+</span>
+<span class="small">${o.items.map(i=>i.name).join(', ')}</span>
+</div>
+<div class="actions">${nextAction(o)}</div>
+</article>`}).join(''):'<p class="notice">Nenhuma corrida disponÃ­vel no momento. Fique online para receber pedidos aguardando motoboy.</p>'}
+q('#online').onchange=e=>{try{core.setCourierOnline('COURIER-DEMO',e.target.checked,courierActor);toast(e.target.checked?'VocÃª estÃ¡ online.':'VocÃª estÃ¡ offline.')}catch(err){toast(err.message)}};q('#courierForm').onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));try{core.registerCourier({...f,documents:f.documents.split(',').map(x=>x.trim()).filter(Boolean)});e.target.reset();toast('Cadastro enviado para aprovaÃ§Ã£o.')}catch(err){toast(err.message)}};core.subscribe(render);render();
+</script>
+</body>
+</html>
