@@ -1,0 +1,8 @@
+# Local secrets and Supabase CLI state must never be committed.
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+supabase/.env
+
